@@ -1,43 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="mn">
 <head>
-    <title>Safebooru Image Search</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>Safebooru Зураг Хайх</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Safebooru Зураг Хайх</h1>
+  <h1>Safebooru Зураг Хайх</h1>
+  
+  <!-- Search form -->
+  <form method="POST">
+    <input type="text" name="keyword" value="{{ keyword }}" placeholder="Түлхүүр үг">
+    <button type="submit">Хайх</button>
+  </form>
 
-    <form method="POST">
-        <input type="text" name="keyword" value="{{ keyword }}" placeholder="Түлхүүр үг" required>
-        <button type="submit">Хайх</button>
-    </form>
+  <!-- Display images -->
+  <div class="grid">
+    {% for img in images %}
+      <img src="{{ img }}" alt="Image" width="150">
+    {% endfor %}
+  </div>
 
-    <div class="gallery">
-        {% for img in images %}
-            <img src="{{ img }}" alt="Image">
-        {% endfor %}
-    </div>
-
-    {% if images %}
-    <div class="pagination">
-        <form method="GET">
-            <input type="hidden" name="keyword" value="{{ keyword }}">
-
-            {% if page > 0 %}
-                <button name="page" value="{{ page - 1 }}">← Өмнөх</button>
-            {% else %}
-                <button disabled>← Өмнөх</button>
-            {% endif %}
-
-            {% for i in range(page, page + 5) %}
-                <button name="page" value="{{ i }}" {% if i == page %}style="font-weight:bold;"{% endif %}>
-                    {{ i + 1 }}
-                </button>
-            {% endfor %}
-
-            <button name="page" value="{{ page + 1 }}">Дараах →</button>
-        </form>
-    </div>
+  <!-- Pagination -->
+  <div class="pagination">
+    {% if page > 0 %}
+      <a href="/?keyword={{ keyword }}&page={{ page - 1 }}">Өмнөх</a>
     {% endif %}
+
+    {% for p in range(page, page + 5) %}
+      <a href="/?keyword={{ keyword }}&page={{ p }}">{{ p + 1 }}</a>
+    {% endfor %}
+
+    <a href="/?keyword={{ keyword }}&page={{ page + 1 }}">Дараах</a>
+  </div>
 </body>
 </html>

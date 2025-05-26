@@ -7,8 +7,12 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # Get search keyword and page number from the URL query
+ if request.method == 'POST':
+    keyword = request.form.get('keyword', '')
+    page = 0  # Reset to first page on new search
+ else:
     keyword = request.args.get('keyword', '')
-    page = int(request.args.get('page', 0))  # Default to 0
+    page = int(request.args.get('page', 0))
 
     # Set up API request parameters for Safebooru
     params = {
