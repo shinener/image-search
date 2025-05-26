@@ -1,0 +1,47 @@
+/* Center everything on the page and add padding */
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+/* Style the search form */
+form {
+    margin-bottom: 20px;
+}
+
+/* Style the input box */
+input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    font-size: 16px;
+}
+
+/* Style the search button */
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+/* Use CSS grid to make images appear in a compact grid */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* flexible columns */
+    gap: 8px; /* space between images */
+    justify-items: center; /* center images in their grid cells */
+}
+
+/* Style individual images */
+.gallery img {
+    width: 120px; /* smaller width */
+    height: 90px; /* smaller height */
+    object-fit: cover; /* crop/scale images nicely */
+    border-radius: 6px; /* rounded corners */
+    cursor: pointer; /* pointer on hover */
+    transition: transform 0.2s ease; /* smooth zoom effect */
+}
+
+/* Zoom image on hover */
+.gallery img:hover {
+    transform: scale(1.1);
+}

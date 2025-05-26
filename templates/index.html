@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Safebooru Image Search</title>
+    <!-- Link CSS file for styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Search Safebooru</h1>
+
+    <!-- Search form that sends POST request with keyword -->
+    <form method="POST">
+        <input type="text" name="keyword" placeholder="Enter tag (e.g. cat_girl)" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Container for image results -->
+    <div class="gallery">
+        <!-- Loop through images passed from Flask and create img tags -->
+        {% for img in images %}
+            <img src="{{ img }}" alt="Image">
+        {% endfor %}
+    </div>
+</body>
+</html>
+
