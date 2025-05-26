@@ -4,7 +4,7 @@ import webbrowser
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     # Get search keyword and page number from the URL query
     keyword = request.args.get('keyword', '')
