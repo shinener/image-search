@@ -29,7 +29,7 @@ def index():
         if res.status_code == 200:
             try:
                 data = res.json()
-                images = ['https:' + post['file_url'] for post in data if 'file_url' in post]
+                images = ['https://safebooru.org' + post['file_url'] for post in data if 'file_url' in post]
             except:
                 images = []
 
