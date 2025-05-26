@@ -1,39 +1,52 @@
-from flask import Flask, render_template, request  # Import Flask framework tools
-import requests  # To make HTTP requests to Safebooru API
+from flask import Flask, render_template, request
+import requests
 
-app = Flask(__name__)  # Create Flask app instance
+app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])  # Define homepage route, accepts form GET and POST
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    images = []  # Initialize empty list to hold image URLs
+    # List to store image URLs
+    images = []
 
-    # If the user submitted the form (POST request)
+    # Get current page index from URL (defaults to 0 if not present)
+    page = int(request.args.get('page', 0))
+
+    # Keyword is either from POST (new search) or GET (pagination)
+    keyword = ''
     if request.method == 'POST':
-        keyword = request.form['keyword']  # Get the search tag entered by user
+        keyword = request.form['keyword']   # New search input from user
+        page = 0                            # Reset to first page
+    elif request.method == 'GET':
+        keyword = request.args.get('keyword', '')  # Keep keyword when paging
 
-        # Parameters for Safebooru API request
+    # Only search if a keyword is provided
+    if keyword:
+        # Danbooru-style Safebooru API parameters
         params = {
-            'page': 'dapi',     # Use Safebooru API interface 
-            's': 'post',        # Search posts
-            'q': 'index',       # List posts
-            'json': 1,          # Request JSON response format
-            'tags': keyword,    # Use the user input as search tags
-            'limit': 20         # Number of posts to return
+            'page': 'dapi',
+            's': 'post',
+            'q': 'index',
+            'json': 1,               # Return results in JSON
+            'tags': keyword,         # Tag(s) to search
+            'limit': 20,             # Images per page
+            'pid': page              # Page index for pagination
         }
 
-        # Send GET request to Safebooru API with parameters
+        # Make a GET request to Safebooru API
         response = requests.get('https://safebooru.org/index.php', params=params)
 
-        # If the response is successful
         if response.status_code == 200:
-            data = response.json()  # Parse the JSON data
+            data = response.json()
 
-            # Extract image URLs from each post if available
-            images = [post['file_url'] for post in data if 'file_url' in post]
+            # Extract image URLs from the JSON response
+            images = [
+                'https:' + post['file_url']
+                for post in data
+                if 'file_url' in post
+            ]
 
-    # Render the HTML template, passing the image URLs to it
-    return render_template('index.html', images=images)
-
-# Run the Flask app in debug mode for easier troubleshooting
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Render the page with images, keyword, and current page
+    return render_template('index.html',
+                           images=images,
+                           keyword=keyword,
+                           page=page)
