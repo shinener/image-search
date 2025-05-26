@@ -1,42 +1,48 @@
 from flask import Flask, render_template, request
 import requests
+import webbrowser
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    images = []
-    page = int(request.args.get('page', 0))
-    keyword = ''
+    # Get search keyword and page number from the URL query
+    keyword = request.args.get('keyword', '')
+    page = int(request.args.get('page', 0))  # Default to 0
 
-    if request.method == 'POST':
-        keyword = request.form['keyword']
-        page = 0
+    # Set up API request parameters for Safebooru
+    params = {
+        'page': 'dapi',      # Required by the API
+        's': 'post',         # Means we want post/image data
+        'q': 'index',        # Request index (search)
+        'json': 1,           # JSON response
+        'tags': keyword,     # User's search keyword
+        'limit': 20,         # 20 images per page
+        'pid': page          # Which page number to load
+    }
+
+    # Make the HTTP request to Safebooru
+    res = requests.get('https://safebooru.org/index.php', params=params, headers={"Accept": "application/json"})
+
+    # If request was successful
+    if res.status_code == 200:
+        try:
+            data = res.json()
+            # Safebooru image URLs need to be built manually
+            images = [
+                f"https://safebooru.org/images/{post['directory']}/{post['image']}"
+                for post in data if 'image' in post and 'directory' in post
+            ]
+        except Exception as e:
+            print(f"Error: {e}")
+            images = []
     else:
-        keyword = request.args.get('keyword', '')
+        images = []
 
-    if keyword:
-        params = {
-            'page': 'dapi',
-            's': 'post',
-            'q': 'index',
-            'json': 1,
-            'tags': keyword,
-            'limit': 20,
-            'pid': page
-        }
-        res = requests.get('https://safebooru.org/index.php', params=params)
-        if res.status_code == 200:
-            try:
-                data = res.json()
-                images = ['https://safebooru.org' + post['file_url'] for post in data if 'file_url' in post]
-            except:
-                images = []
-
+    # Render the HTML template
     return render_template('index.html', images=images, keyword=keyword, page=page)
 
-import webbrowser
-
+# Auto open browser on startup
 if __name__ == '__main__':
     webbrowser.open('http://127.0.0.1:5000/')
     app.run(debug=True)
