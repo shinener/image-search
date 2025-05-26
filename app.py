@@ -13,7 +13,7 @@ def index():
 
         # Parameters for Safebooru API request
         params = {
-            'page': 'dapi',     # Use Danbooru API interface (Safebooru supports this)
+            'page': 'dapi',     # Use Safebooru API interface 
             's': 'post',        # Search posts
             'q': 'index',       # List posts
             'json': 1,          # Request JSON response format
