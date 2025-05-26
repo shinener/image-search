@@ -7,46 +7,37 @@
 <body>
     <h1>Safebooru Зураг Хайх</h1>
 
-    <!-- Search Form -->
     <form method="POST">
-        <!-- Input retains the keyword after search -->
-        <input type="text" name="keyword" value="{{ keyword }}" placeholder="Түлхүүр үг оруулах" required>
+        <input type="text" name="keyword" value="{{ keyword }}" placeholder="Түлхүүр үг" required>
         <button type="submit">Хайх</button>
     </form>
 
-    <!-- Gallery: Loop through image list -->
     <div class="gallery">
         {% for img in images %}
             <img src="{{ img }}" alt="Image">
         {% endfor %}
     </div>
 
-    <!-- Pagination Controls -->
     {% if images %}
-        <div class="pagination">
-            <form method="GET">
-                <input type="hidden" name="keyword" value="{{ keyword }}">
+    <div class="pagination">
+        <form method="GET">
+            <input type="hidden" name="keyword" value="{{ keyword }}">
 
-                <!-- Previous page (disable if on first page) -->
-                {% if page > 0 %}
-                    <button type="submit" name="page" value="{{ page - 1 }}">← Өмнөх</button>
-                {% else %}
-                    <button type="button" disabled>← Өмнөх</button>
-                {% endif %}
+            {% if page > 0 %}
+                <button name="page" value="{{ page - 1 }}">← Өмнөх</button>
+            {% else %}
+                <button disabled>← Өмнөх</button>
+            {% endif %}
 
-                <!-- Page numbers (e.g., 1 2 3 4 5 ...) -->
-                {% for i in range(page, page + 5) %}
-                    <button type="submit" name="page" value="{{ i }}"
-                            {% if i == page %}style="font-weight:bold;"{% endif %}>
-                        {{ i + 1 }}
-                    </button>
-                {% endfor %}
+            {% for i in range(page, page + 5) %}
+                <button name="page" value="{{ i }}" {% if i == page %}style="font-weight:bold;"{% endif %}>
+                    {{ i + 1 }}
+                </button>
+            {% endfor %}
 
-                <!-- Next page -->
-                <button type="submit" name="page" value="{{ page + 1 }}">Дараах →</button>
-            </form>
-        </div>
+            <button name="page" value="{{ page + 1 }}">Дараах →</button>
+        </form>
+    </div>
     {% endif %}
 </body>
 </html>
-
